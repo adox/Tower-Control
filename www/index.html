@@ -1,0 +1,145 @@
+<html>
+<head>
+<!-- INCLUDE THE FOLLOWING JGAUGE REQUIREMENTS... -->
+<link rel="stylesheet" href="css/jgauge.css" type="text/css" /> <!-- CSS for jGauge styling. -->
+<link rel="stylesheet" href="css/jgaugecontrol.css" type="text/css" />
+
+<!--[if IE]><script type="text/javascript" language="javascript" src="js/excanvas.min.js"></script><![endif]--> <!-- Extends canvas support to IE. (Possibly buggy, need to look into this.) -->
+<script language="javascript" type="text/javascript" src="js/jquery-1.4.2.min.js"></script> <!-- jQuery JavaScript library. -->
+<script language="javascript" type="text/javascript" src="js/jQueryRotate.min.js"></script> <!-- jQueryRotate plugin used for needle movement. -->
+<script language="javascript" type="text/javascript" src="js/jgauge-0.3.0.a3.js"></script> <!-- jGauge JavaScript. -->
+<script language="javascript" type="text/javascript" src="js/jgaugecontrol.js"></script>
+
+<script type="text/javascript">
+	var jGauge1 = new jGauge(); // Create a new jGauge.
+	jGauge1.id = 'jGauge1'; // Link the new jGauge to the placeholder DIV.
+	jGauge1.label.suffix = 'deg'; // Make the value label bytes.
+	jGauge1.autoPrefix = autoPrefix.none;
+	jGauge1.ticks.count = 5;
+	jGauge1.ticks.start = 0;
+	jGauge1.ticks.end = 360;
+	jGauge1.segmentStart = -90;
+	jGauge1.segmentEnd = 270;
+	jGauge1.range.start = 80; // red area
+	jGauge1.range.end = 100;
+	jGauge1.imagePath = "img/jgauge_face_round.png";
+	jGauge1.width = 160;
+	jGauge1.height = 160;
+	jGauge1.needle.xOffset = 0;
+	jGauge1.needle.yOffset = 0;
+	jGauge1.label.xOffset = 0;
+	jGauge1.label.yOffset = 0;
+	
+	var jGauge2 = new jGauge(); // Create a new jGauge.
+	jGauge2.id = 'jGauge2'; // Link the new jGauge to the placeholder DIV.
+	jGauge2.label.suffix = 'deg'; // Make the value label bytes.
+	jGauge2.autoPrefix = autoPrefix.none;
+	jGauge2.ticks.count = 5;
+	jGauge2.ticks.start = 0;
+	jGauge2.ticks.end = 360;
+	jGauge2.segmentStart = -90;
+	jGauge2.segmentEnd = 270;
+	jGauge2.range.start = 80; // red area
+	jGauge2.range.end = 100;
+	jGauge2.imagePath = "img/jgauge_face_round.png";
+	jGauge2.width = 160;
+	jGauge2.height = 160;
+	jGauge2.needle.xOffset = 0;
+	jGauge2.needle.yOffset = 0;
+	jGauge2.label.xOffset = 0;
+	jGauge2.label.yOffset = 0;
+	
+	var jGauge3 = new jGauge(); // Create a new jGauge.
+	jGauge3.id = 'jGauge3'; // Link the new jGauge to the placeholder DIV.
+	jGauge3.label.suffix = 'deg'; // Make the value label bytes.
+	jGauge3.autoPrefix = autoPrefix.none;
+	jGauge3.ticks.count = 5;
+	jGauge3.ticks.start = 0;
+	jGauge3.ticks.end = 360;
+	jGauge3.segmentStart = -90;
+	jGauge3.segmentEnd = 270;
+	jGauge3.range.start = 80; // red area
+	jGauge3.range.end = 100;
+	jGauge3.imagePath = "img/jgauge_face_round.png";
+	jGauge3.width = 160;
+	jGauge3.height = 160;
+	jGauge3.needle.xOffset = 0;
+	jGauge3.needle.yOffset = 0;
+	jGauge3.label.xOffset = 0;
+	jGauge3.label.yOffset = 0;
+
+	var jGauge4 = new jGauge(); // Create a new jGauge.
+	jGauge4.id = 'jGauge4'; // Link the new jGauge to the placeholder DIV.
+	jGauge4.label.suffix = 'deg'; // Make the value label bytes.
+	jGauge4.autoPrefix = autoPrefix.none;
+	jGauge4.ticks.count = 5;
+	jGauge4.ticks.start = 0;
+	jGauge4.ticks.end = 360;
+	jGauge4.segmentStart = -90;
+	jGauge4.segmentEnd = 270;
+	jGauge4.range.start = 80; // red area
+	jGauge4.range.end = 100;
+	jGauge4.imagePath = "img/jgauge_face_round.png";
+	jGauge4.width = 160;
+	jGauge4.height = 160;
+	jGauge4.needle.xOffset = 0;
+	jGauge4.needle.yOffset = 0;
+	jGauge4.label.xOffset = 0;
+	jGauge4.label.yOffset = 0;
+	
+	// controls
+	var jGauge1Control = new jGaugeControl();
+	jGauge1Control.id = 'jGauge1Control';
+	jGauge1Control.jGauge = jGauge1;
+	
+	var jGauge2Control = new jGaugeControl();
+	jGauge2Control.id = 'jGauge2Control';
+	jGauge2Control.jGauge = jGauge2;
+	
+	var jGauge3Control = new jGaugeControl();
+	jGauge3Control.id = 'jGauge3Control';
+	jGauge3Control.jGauge = jGauge3;
+	
+	var jGauge4Control = new jGaugeControl();
+	jGauge4Control.id = 'jGauge4Control';
+	jGauge4Control.jGauge = jGauge4;
+	
+	$(document).ready(function() {
+		jGauge1.init();		
+		jGauge2.init();
+		jGauge3.init();
+		jGauge4.init();
+		
+		jGauge1Control.init();
+		jGauge2Control.init();
+		jGauge3Control.init();
+		jGauge4Control.init();
+		
+	});
+</script>
+
+</head>
+
+<body>
+	<div style="margin:0 auto;">
+			<div style="display: block; float: left">
+				<div id="jGauge1" class="jgauge"></div>
+				<div id="jGauge1Control" class="jgaugecontrol"></div>			
+			</div>
+
+			<div style="display: block; float: left">
+				<div id="jGauge2" class="jgauge"></div>
+				<div id="jGauge2Control" class="jgaugecontrol"></div>			
+			</div>
+			
+			<div style="display: block; float: left">
+				<div id="jGauge3" class="jgauge"></div>
+				<div id="jGauge3Control" class="jgaugecontrol"></div>
+			</div>
+			
+			<div style="display: block; float: left">
+				<div id="jGauge4" class="jgauge"></div>
+				<div id="jGauge4Control" class="jgaugecontrol"></div>				
+			</div>
+	</div>
+</body>
