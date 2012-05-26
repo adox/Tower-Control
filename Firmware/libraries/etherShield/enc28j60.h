@@ -23,6 +23,42 @@
 #define ENC28J60_H
 #include <inttypes.h>
 
+// If this is a Mega then use alternative SPI pins
+// In setup() function in your sketch also use the following:
+// /* Disable SD card */
+// pinMode(4, OUTPUT);
+// digitalWrite(4, HIGH);
+// 
+// If you use a pin other than 53 then you still need to define
+// pin 53 as output, in similar manner to ATMega328 versions:
+// pinMode(53, OUTPUT);
+// digitalWrite(53, HIGH);
+// 
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+
+#define DEFAULT_ENC28J60_CONTROL_CS 53
+#define SPI_SS 53
+#define SPI_MOSI 51
+#define SPI_MISO 50
+#define SPI_SCK 52
+
+#else
+
+// Default CS pin is 10, for the unmodified shield.
+// Can be changed in init function to use another pin
+// But SPI_SS needs to be setup correctly too
+
+// Default CS pin is 10, for the unmodified shield.
+// Can be changed in init function to use another pin
+// But SPI_SS needs to be setup correctly too
+#define DEFAULT_ENC28J60_CONTROL_CS             10
+#define SPI_SS                                  10
+#define SPI_MOSI				11
+#define SPI_MISO				12
+#define SPI_SCK					13
+
+#endif
+
 // ENC28J60 Control Registers
 // Control register definitions are a combination of address,
 // bank number, and Ethernet/MAC/PHY indicator bits.
@@ -271,10 +307,20 @@ extern uint8_t enc28j60Read(uint8_t address);
 extern void enc28j60Write(uint8_t address, uint8_t data);
 extern void enc28j60PhyWrite(uint8_t address, uint16_t data);
 extern void enc28j60clkout(uint8_t clk);
+extern void enc28j60SpiInit(void);
 extern void enc28j60Init(uint8_t* macaddr);
+extern void enc28j60InitWithCs( uint8_t* macaddr, uint8_t csPin );
 extern void enc28j60PacketSend(uint16_t len, uint8_t* packet);
 extern uint16_t enc28j60PacketReceive(uint16_t maxlen, uint8_t* packet);
 extern uint8_t enc28j60getrev(void);
+extern uint8_t enc28j60hasRxPkt(void);
+extern uint8_t enc28j60linkup(void);
+extern void enc28j60EnableBroadcast( void );
+extern void enc28j60DisableBroadcast( void );
+extern void enc28j60EnableMulticast( void );
+extern void enc28j60DisableMulticast( void );
+extern void enc28j60PowerDown();
+extern void enc28j60PowerUp();
 
 #endif
 //@}

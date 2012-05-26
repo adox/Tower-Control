@@ -23,9 +23,49 @@ function setValue(d) {
 	if(d > this.rangeStop)
 		d -= 360;
 		
-	if(d >= this.rangeStart && d <= this.rangeStop)
+	if(d >= this.rangeStart && d <= this.rangeStop) {
 		this.jGauge.setValue(d);
-	
+		//alert("http://192.168.1.15?" + d);
+
+		/*
+		$.get('http://192.168.1.15/', function(data) {
+			alert(data);
+			});
+		}*/
+		
+		/*
+		$.get('http://192.168.1.15/?100', function(data) {
+			alert(data);
+			});
+		}
+		*/
+
+/*		
+		$.ajax({
+			url: 'http://news.bbc.co.uk',
+			type: 'GET',
+			success: function(res) {
+				var headline = $(res.responseText).find('a.tsh').text();
+				alert(headline);
+			}
+		});		
+		}	
+	*/	
+		/*
+		$.get('test.html', function(data) {
+			alert(data);
+			});
+		}
+		*/
+		$.ajax({
+			url: 'http://192.168.1.15',
+			//url: 'http://google.pl',
+			type: 'GET',
+			success: function(res) {
+				alert(res);
+			}
+		});		
+		}			
 }
 
 function getValue() {

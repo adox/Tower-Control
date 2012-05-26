@@ -10,9 +10,6 @@
  *
  * Chip type           : ATMEGA88 with ENC28J60
  *********************************************/
- /*********************************************
- * Modified: nuelectronics.com -- Ethershield for Arduino
- *********************************************/
 
 // notation: _P = position of a field
 //           _V = value of a field
@@ -27,7 +24,6 @@
 // values of certain bytes:
 #define ETHTYPE_ARP_H_V 0x08
 #define ETHTYPE_ARP_L_V 0x06
-#define ETHTYPE_IP_V	0x0800
 #define ETHTYPE_IP_H_V  0x08
 #define ETHTYPE_IP_L_V  0x00
 // byte positions in the ethernet frame:
@@ -43,6 +39,10 @@
 // ******* ARP *******
 #define ETH_ARP_OPCODE_REPLY_H_V 0x0
 #define ETH_ARP_OPCODE_REPLY_L_V 0x02
+#define ETH_ARP_OPCODE_REQ_H_V 0x0
+#define ETH_ARP_OPCODE_REQ_L_V 0x01
+// start of arp header:
+#define ETH_ARP_P 0xe
 //
 #define ETHTYPE_ARP_L_V 0x06
 // arp.dst.ip
@@ -55,32 +55,6 @@
 #define ETH_ARP_SRC_IP_P 0x1c
 #define ETH_ARP_DST_MAC_P 0x20
 #define ETH_ARP_DST_IP_P 0x26
-
-#define ARP_OPCODE_REQUEST_H_V	0x00
-#define ARP_OPCODE_REQUEST_L_V	0x01
-#define ARP_OPCODE_REPLY_H_V	0x00
-#define ARP_OPCODE_REPLY_L_V	0x02
-
-#define ARP_HARDWARE_TYPE_H_V	0x00
-#define ARP_HARDWARE_TYPE_L_V	0x01
-#define ARP_PROTOCOL_H_V		0x08
-#define ARP_PROTOCOL_L_V		0x00
-#define ARP_HARDWARE_SIZE_V		0x06
-#define ARP_PROTOCOL_SIZE_V		0x04
-
-#define ARP_HARDWARE_TYPE_H_P	0x0E
-#define ARP_HARDWARE_TYPE_L_P	0x0F
-#define ARP_PROTOCOL_H_P		0x10
-#define ARP_PROTOCOL_L_P		0x11
-#define ARP_HARDWARE_SIZE_P		0x12
-#define ARP_PROTOCOL_SIZE_P		0x13
-#define ARP_OPCODE_H_P			0x14
-#define ARP_OPCODE_L_P			0x15
-#define ARP_SRC_MAC_P			0x16
-#define ARP_SRC_IP_P			0x1C
-#define ARP_DST_MAC_P			0x20
-#define ARP_DST_IP_P			0x26
-
 
 // ******* IP *******
 #define IP_HEADER_LEN		20
@@ -112,12 +86,38 @@
 #define IP_SRC_P 			0x1a
 #define IP_DST_P 			0x1e
 #define IP_HEADER_LEN_VER_P 0xe
+
+// ip.src
+/*
+#define IP_SRC_P 0x1a
+#define IP_DST_P 0x1e
+#define IP_P 0xe
+#define IP_HEADER_LEN_VER_P 0xe
+#define IP_CHECKSUM_P 0x18
+#define IP_TTL_P 0x16
+#define IP_FLAGS_P 0x14
+#define IP_TOTLEN_H_P 0x10
+#define IP_TOTLEN_L_P 0x11
+
+#define IP_PROTO_P 0x17  
+
+#define IP_PROTO_ICMP_V 1
+#define IP_PROTO_TCP_V 6
+// 17=0x11
+#define IP_PROTO_UDP_V 17
+#define IP_V4_V         0x40
+*/
 // ******* ICMP *******
 #define ICMP_TYPE_ECHOREPLY_V 0
 #define ICMP_TYPE_ECHOREQUEST_V 8
 //
 #define ICMP_TYPE_P 0x22
 #define ICMP_CHECKSUM_P 0x24
+#define ICMP_CHECKSUM_H_P 0x24
+#define ICMP_CHECKSUM_L_P 0x25
+#define ICMP_IDENT_H_P 0x26
+#define ICMP_IDENT_L_P 0x27
+#define ICMP_DATA_P 0x2a
 
 // ******* UDP *******
 #define UDP_HEADER_LEN	8
@@ -134,34 +134,25 @@
 #define UDP_DATA_P 0x2a
 
 // ******* TCP *******
-//  plain len without the options:
-#define TCP_HEADER_LEN_PLAIN 20
-
-		
-#define TCP_FLAG_FIN_V		0x01
 #define TCP_FLAGS_FIN_V		0x01
 #define TCP_FLAGS_SYN_V		0x02
-#define TCP_FLAG_SYN_V		0x02
-#define TCP_FLAG_RST_V		0x04
-#define TCP_FLAG_PUSH_V		0x08
+#define TCP_FLAGS_RST_V         0x04
+#define TCP_FLAGS_PUSH_V        0x08
 #define TCP_FLAGS_ACK_V		0x10
-#define TCP_FLAG_ACK_V		0x10
-#define TCP_FLAG_URG_V		0x20
-#define TCP_FLAG_ECE_V		0x40
-#define TCP_FLAG_CWR_V		0x80
 #define TCP_FLAGS_SYNACK_V 	0x12
+#define TCP_FLAGS_PSHACK_V      0x18
 
-#define TCP_SRC_PORT_H_P 	0x22
-#define TCP_SRC_PORT_L_P 	0x23
-#define TCP_DST_PORT_H_P 	0x24
-#define TCP_DST_PORT_L_P 	0x25
-#define TCP_SEQ_P  			0x26	// the tcp seq number is 4 bytes 0x26-0x29
-#define TCP_SEQ_H_P 		0x26
-#define TCP_SEQACK_P  		0x2A	// 4 bytes
-#define TCP_SEQACK_H_P 		0x2A
-#define TCP_HEADER_LEN_P 	0x2E
-#define TCP_FLAGS_P 		0x2F
-#define TCP_FLAG_P			0x2F
+#define TCP_SRC_PORT_H_P 0x22
+#define TCP_SRC_PORT_L_P 0x23
+#define TCP_DST_PORT_H_P 0x24
+#define TCP_DST_PORT_L_P 0x25
+#define TCP_SEQ_P        0x26   // the tcp seq number is 4 bytes 0x26-0x29
+#define TCP_SEQ_H_P      0x26
+#define TCP_SEQACK_P     0x2a
+#define TCP_SEQACK_H_P   0x2a
+// flags: SYN=2
+#define TCP_FLAGS_P 0x2f
+//#define TCP_FLAG_P 0x2f
 #define TCP_WINDOWSIZE_H_P	0x30	// 2 bytes
 #define TCP_WINDOWSIZE_L_P	0x31
 #define TCP_CHECKSUM_H_P 	0x32
@@ -170,8 +161,31 @@
 #define TCP_URGENT_PTR_L_P 	0x35
 #define TCP_OPTIONS_P 		0x36
 #define TCP_DATA_P			0x36
-
+//  plain len without the options:
+#define TCP_HEADER_LEN_PLAIN 20
+#define TCP_HEADER_LEN_P 0x2e
+#define TCP_WIN_SIZE 0x30
+#define TCP_CHECKSUM_H_P 0x32
+#define TCP_CHECKSUM_L_P 0x33
+#define TCP_OPTIONS_P 0x36
 //
+//
+
+// DNS States for access in applications
+#define DNS_STATE_INIT 0
+#define DNS_STATE_REQUESTED 1
+#define DNS_STATE_ANSWER 2
+
+// DHCP States for access in applications
+#define DHCP_STATE_INIT 0
+#define DHCP_STATE_DISCOVER 1
+#define DHCP_STATE_OFFER 2
+#define DHCP_STATE_REQUEST 3
+#define DHCP_STATE_ACK 4
+#define DHCP_STATE_OK 5
+#define DHCP_STATE_RENEW 6
+
+
 #endif
 //@}
 
