@@ -1,0 +1,75 @@
+<html><head>
+<script type='text/javascript'>
+function start() {
+	if (window.XMLHttpRequest) { // Mozilla, Safari, Opera ...
+	http_request = new XMLHttpRequest();
+	 } else if (window.ActiveXObject) { // IE
+	http_request = new
+	 ActiveXObject("Microsoft.XMLHTTP");
+	 }
+	 
+	 http_request.onreadystatechange = function(){
+		if (http_request.readyState == 4) {
+		// wszystko jest OK, odpowiedŸ zosta³a odebrana
+			if (http_request.status == 200) {
+				// œwietnie!!
+				alert("Response status: 200");
+				alert(http_request.responseText);
+			 } else {
+				// wyst¹pi³ jakiœ problem z zapytaniem,
+				// na przyk³ad odpowiedzi¹ mog³o byæ 404 (Nie odnaleziono)
+				// lub 500 (Wewnêtrzny b³¹d serwera)
+				alert("Response status: error " + http_request.status);
+				alert(http_request.responseText);
+				alert(http_request.response);
+			 }		
+		 } else {
+		// ci¹gle nie gotowe
+		 }	
+	 };
+	 
+
+	 }
+	 
+	 function get() {
+	 	 http_request.open('GET','http://localhost/Tower-Control/test.html', true);
+		 http_request.overrideMimeType("text/plain; charset=x-user-defined");  
+		 http_request.send();
+	 }
+	 
+	 function setValue(v) {
+		//alert('set');
+		var svgDoc = document.getElementById("needle");
+			//alert( svgDoc.getAttributeNS(null,"cx") );		
+			//svgDoc.setAttributeNS(null,"cx", 200);
+			svgDoc.setAttributeNS(null,"transform","rotate(" + v + ",150,143)");
+	 }
+</script>
+</head>
+
+<body onload="start()">
+<input type='button' value='Off' id='btnOff' /><input type='button' value='On'  id='btnOn'  onclick="get()"/>
+
+<svg id='compass1' xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 300 286" preserveAspectRatio="xMidYMid slice" style="width: 300px; height: 286px; display: block">
+  <g id="background" style="display:inline">
+    <rect width="300" height="286" ry="21" x="0" y="0" id="rect2936" style="fill:#000000;" />
+	<circle cx="150" cy="143" r="140" stroke="white" stroke-width="4" fill="none"/>
+	
+	<path d="m 150 10 l 0 40" style="fill:none;stroke:#ffffff;stroke-width:4;stroke-linecap:butt" />
+	<path d="m 17 143 l 40 0" style="fill:none;stroke:#ffffff;stroke-width:4;stroke-linecap:butt" />
+	<path d="m 150 276 l 0 -40" style="fill:none;stroke:#ffffff;stroke-width:4;stroke-linecap:butt" />
+	<path d="m 283 143 l -40 0" style="fill:none;stroke:#ffffff;stroke-width:4;stroke-linecap:butt" />
+	<circle id="ctest" cx="150" cy="143" r="2" stroke="white" stroke-width="2" fill="white"/>
+	
+    <text x="150" y="50" dx="-9" dy="25" id="text10531" style="font-size:30px;fill:#ff8c00;fill-opacity:1;font-family:Berlin Sans FB">0</text>
+    <text x="150" y="143" dx="-9" dy="-25" id="text11061" style="font-size:24px;fill:#ffffff;fill-opacity:1;font-family:Berlin Sans FB">24</text>
+	
+	<path id="needle" d="m 150 133 l 0 -100" style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt" />
+	
+  </g>
+</svg> 
+
+<input type='button' value='0' onclick='setValue(0)' />
+<input type='button' value='15' onclick='setValue(15)' />
+
+</body></html>	
