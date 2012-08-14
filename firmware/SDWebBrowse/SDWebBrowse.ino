@@ -40,6 +40,9 @@ SdVolume volume;
 SdFile root;
 SdFile file;
 
+/************ TOWER CONTROL ************/
+int rot[4];
+
 // store error strings in flash to save RAM
 #define error(s) error_P(PSTR(s))
 
@@ -213,12 +216,23 @@ void loop()
           // print the file we want
           Serial.println(filename);
 
-          if(strstr(filename, "?pwm=") != 0) {
-            Serial.println("PWM set request");
+          if(strstr(filename, "?rot") != 0) {
+            Serial.println("ROT set request");
             // extract value
-            
-            
-            // set pwm
+            char *rotValue;
+
+            rotValue = filename + 6;
+            Serial.println(rotValue);         
+
+            if(strstr(filename, "?rot1=") != 0) {
+              rot[0] = atoi(rotValue);
+            } else if(strstr(filename, "?rot2=") != 0) {
+              rot[1] = atoi(rotValue);
+            } else if(strstr(filename, "?rot3=") != 0) {
+              rot[2] = atoi(rotValue);
+            } else if(strstr(filename, "?rot4=") != 0) {
+              rot[3] = atoi(rotValue);
+            }
             
             // end
             client.println("HTTP/1.1 200 OK");
@@ -228,7 +242,16 @@ void loop()
             client.println("HTTP/1.1 200 OK");
             client.println("Content-Type: text/html");
             client.println();
-            client.println("45");
+
+            if(strstr(filename, "?get1") != 0)
+              client.println(rot[0]);
+            else if(strstr(filename, "?get2") != 0)
+              client.println(rot[1]);
+            else if(strstr(filename, "?get3") != 0)
+              client.println(rot[2]);
+            else if(strstr(filename, "?get4") != 0)
+              client.println(rot[3]);
+              
             break;
           } else if (! file.open(&root, filename, O_READ)) {
             client.println("HTTP/1.1 404 Not Found");

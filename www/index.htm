@@ -17,11 +17,15 @@ function start() {
 	 makeGauge("gauge3");
 	 makeGauge("gauge4");
 	 
-	 get("gauge1", "http://" + server + "/?get1");
+	 get("gauge1", "http://" + server + "/?get1", funcGet);
+	 get("gauge2", "http://" + server + "/?get2", funcGet);
+	 get("gauge3", "http://" + server + "/?get3", funcGet);
+	 get("gauge4", "http://" + server + "/?get4", funcGet);
+	 
 }
 
 	 
-function get(divId, url) {
+function get(divId, url, func) {
 	var http_request;
 	var _divId = divId;
 	
@@ -34,9 +38,11 @@ function get(divId, url) {
 	 http_request.onreadystatechange = function(){
 		if (http_request.readyState == 4) {
 			if (http_request.status == 200) {
-				setStatus(_divId, "OK " + http_request.responseText);
+				func("OK", _divId, http_request);
+				//setStatus(_divId, "OK " + http_request.responseText);
 			 } else {
-				setStatus(_divId, "Error, code " + http_request.status);
+				func("ERROR", _divId, http_request);
+				//setStatus(_divId, "Error, code " + http_request.status);
 			 }		
 		 } else {}	
 	 };
@@ -44,6 +50,24 @@ function get(divId, url) {
 	 http_request.open('GET',url,true);
 	 http_request.send();
 
+}
+
+// function that is called after set value request
+function funcSet(ret, divId, http_request) {
+	if(ret == "OK")
+		setStatus(divId, "funcSet OK " + http_request.responseText);
+	else if(ret == "ERROR")
+		setStatus(divId, "Error, code " + http_request.status);
+}
+
+// function that is called after get value request
+function funcGet(ret, divId, http_request) {
+	if(ret == "OK") {
+		var val = http_request.responseText;
+		setValue(divId, val);
+		setStatus(divId, "funcGet OK " + http_request.responseText);
+	} else if(ret == "ERROR")
+		setStatus(divId, "Error, code " + http_request.status);
 }
 
  
@@ -98,7 +122,12 @@ function mUp(evt, src) {
 	
 	if(bmousedown) {
 		setStatus(divId, 'Set request to ' + val);
-		get(divId, 'http://' + server + '/?pwm=' + val);
+		switch(divId) {
+			case "gauge1": get(divId, 'http://' + server + '/?rot1=' + val, funcSet); break;
+			case "gauge2": get(divId, 'http://' + server + '/?rot2=' + val, funcSet); break;
+			case "gauge3": get(divId, 'http://' + server + '/?rot3=' + val, funcSet); break;
+			case "gauge4": get(divId, 'http://' + server + '/?rot4=' + val, funcSet); break;
+		}
 	}
 		
 	bmousedown=0;
