@@ -1,13 +1,15 @@
 <html><head>
 <style type="text/css">
 .tick {fill:none;stroke:#fff;stroke-width:4;stroke-linecap:butt}
-.gaugeContainer {float: left; margin: 10 10 10 10}
+.gaugeContainer {float: left; margin: 5 5 5 5}
 .statusBar {width: 95%; margin: 10px auto; border: 0px solid black; text-align: center}
 </style>
 <script type='text/javascript'>
 var server = '192.168.1.80';
-var bmousedown=0;
-var val=0;
+var bmousedown = 0;
+var gaugeUnderSet = null;
+var val = 0;
+var intervalId;
 
 function start() {
  
@@ -17,13 +19,35 @@ function start() {
 	 makeGauge("gauge3");
 	 makeGauge("gauge4");
 	 
-	 get("gauge1", "http://" + server + "/?get1", funcGet);
-	 get("gauge2", "http://" + server + "/?get2", funcGet);
-	 get("gauge3", "http://" + server + "/?get3", funcGet);
-	 get("gauge4", "http://" + server + "/?get4", funcGet);
-	 
+	 startUpdate();
 }
 
+function startUpdate() {
+	intervalId = setInterval(autoUpdate, 1000);
+	document.getElementById("bStartUpdate").disabled = "disabled";
+	document.getElementById("bStopUpdate").disabled = "";
+}
+
+function stopUpdate() {
+	clearInterval(intervalId);
+	document.getElementById("bStartUpdate").disabled = "";
+	document.getElementById("bStopUpdate").disabled = "disabled";
+}
+
+
+function autoUpdate() {
+	if(gaugeUnderSet != "gauge1") 
+		get("gauge1", "http://" + server + "/?get1", funcGet);
+
+	if(gaugeUnderSet != "gauge2") 		
+		get("gauge2", "http://" + server + "/?get2", funcGet);
+
+	if(gaugeUnderSet != "gauge3") 		
+		get("gauge3", "http://" + server + "/?get3", funcGet);
+
+	if(gaugeUnderSet != "gauge4") 
+		get("gauge4", "http://" + server + "/?get4", funcGet);
+}
 	 
 function get(divId, url, func) {
 	var http_request;
@@ -114,7 +138,10 @@ function mMove(evt, src) {
 }
  
 function mDown(evt, src) {
+	var divId = src.parentNode.parentNode.parentNode.id;
+	
 	bmousedown=1;
+	gaugeUnderSet = divId;
 }
 
 function mUp(evt, src) {
@@ -131,6 +158,7 @@ function mUp(evt, src) {
 	}
 		
 	bmousedown=0;
+	gaugeUnderSet = null;
 }
 
 function makeGauge(divId) {
@@ -143,17 +171,23 @@ function makeGauge(divId) {
 			<path d="m 17 143 l 40 0" class="tick"/> \
 			<path d="m 150 276 l 0 -40" class="tick"/> \
 			<path d="m 283 143 l -40 0" class="tick"/> \
-			<text x="150" y="143" dx="0" dy="8" id="' + divId + '_maintext" text-anchor="middle" style="font-size:30px;fill:#ff8c00;font-family:Berlin Sans FB">180</text> \
+			<text x="150" y="143" dx="0" dy="8" id="' + divId + '_maintext" text-anchor="middle" style="font-size:30px;fill:#ff8c00;font-family:Berlin Sans FB">0</text> \
 			<path id="' + divId + '_needle" d="m 150 113 l 0 -100" class="tick" style="stroke-width:6"/> \
 			<rect width="300" height="286" ry="21" x="0" y="0" opacity="0" onmousemove="mMove(evt, this)" onmousedown="mDown(evt, this)" onmouseup="mUp(evt, this)" /> \
 		  </g> \
 		</svg> \
-		<div class="statusBar"> <textarea rows="4" cols="30" id="' + divId + '_statusBar"></textarea> </div> \
+		<div class="statusBar"> <textarea rows="8" cols="30" id="' + divId + '_statusBar"></textarea> </div> \
 		'
 }
 </script>
 </head>
 <body onload="start()">
+
+<div style="clear: both; margin: 5 5 5 5">
+	<h1>Tower Control 1.0</h1>
+	<button id="bStartUpdate" onclick="startUpdate()">Start</button>
+	<button id="bStopUpdate" onclick="stopUpdate()">Stop</button>
+</div>
 
 <div id="gauge1" class="gaugeContainer"></div>
 <div id="gauge2" class="gaugeContainer"></div>
