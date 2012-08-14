@@ -1,147 +1,77 @@
-<html>
-<head>
-<!-- INCLUDE THE FOLLOWING JGAUGE REQUIREMENTS... -->
-<link rel="stylesheet" href="css/jgauge.css" type="text/css" /> <!-- CSS for jGauge styling. -->
-<link rel="stylesheet" href="css/jgaugecontrol.css" type="text/css" />
+<html><head>
+<style type="text/css">
+.tick {fill:none;stroke:#fff;stroke-width:4;stroke-linecap:butt}
+</style>
+<script type='text/javascript'>
+var server = '192.168.1.80';
+var bmousedown=0;
+var val=0;
 
-<!--[if IE]><script type="text/javascript" language="javascript" src="js/excanvas.min.js"></script><![endif]--> <!-- Extends canvas support to IE. (Possibly buggy, need to look into this.) -->
-<script language="javascript" type="text/javascript" src="js/jquery-1.4.2.min.js"></script> <!-- jQuery JavaScript library. -->
-<script language="javascript" type="text/javascript" src="js/jquery.xdomainajax.js"></script> <!-- for cross domain gets -->
+function start() {
+	if (window.XMLHttpRequest) {
+	http_request = new XMLHttpRequest();
+	 } else if (window.ActiveXObject) {
+	http_request = new
+	 ActiveXObject("Microsoft.XMLHTTP");
+	 }
+	 http_request.onreadystatechange = function(){
+		if (http_request.readyState == 4) {
+			if (http_request.status == 200) {
+				alert(http_request.responseText);
+			 } else {
+				alert("Response status: error " + http_request.status);
+			 }		
+		 } else {}	
+	 };
+}
+	 
+function get(url) {
+	 http_request.open('GET',url,true);
+	 http_request.send();
+}
+ 
+function setValue(v) {
+	var nee = document.getElementById("needle");
+		nee.setAttributeNS(null,"transform","rotate("+v+",150,143)");
+}
+ 
+function mMove(evt) {
+	var msvg = document.getElementById("mainsvg");
+	var offX = msvg.offsetLeft;
+	var offY = msvg.offsetTop;
+	var posX = evt.clientX - offX;
+	var posY = evt.clientY - offY;
 
-<script language="javascript" type="text/javascript" src="js/jQueryRotate.min.js"></script> <!-- jQueryRotate plugin used for needle movement. -->
-<script language="javascript" type="text/javascript" src="js/jgauge-0.3.0.a3.js"></script> <!-- jGauge JavaScript. -->
-<script language="javascript" type="text/javascript" src="js/jgaugecontrol.js"></script>
+	if(bmousedown) {
+		val = Math.round( Math.atan2( (posX - 150) , (-posY + 143) ) * 180/Math.PI );
+		setValue(val);
+		document.getElementById("maintext").textContent = val;
+	}
+ }
+ 
+function mDown(evt) {
+	bmousedown=1;
+}
 
-<script type="text/javascript">
-	var jGauge1 = new jGauge(); // Create a new jGauge.
-	jGauge1.id = 'jGauge1'; // Link the new jGauge to the placeholder DIV.
-	jGauge1.label.suffix = 'deg'; // Make the value label bytes.
-	jGauge1.autoPrefix = autoPrefix.none;
-	jGauge1.ticks.count = 5;
-	jGauge1.ticks.start = 0;
-	jGauge1.ticks.end = 360;
-	jGauge1.segmentStart = -90;
-	jGauge1.segmentEnd = 270;
-	jGauge1.range.start = 80; // red area
-	jGauge1.range.end = 100;
-	jGauge1.imagePath = "img/jgauge_face_round.png";
-	jGauge1.width = 160;
-	jGauge1.height = 160;
-	jGauge1.needle.xOffset = 0;
-	jGauge1.needle.yOffset = 0;
-	jGauge1.label.xOffset = 0;
-	jGauge1.label.yOffset = 0;
-	
-	var jGauge2 = new jGauge(); // Create a new jGauge.
-	jGauge2.id = 'jGauge2'; // Link the new jGauge to the placeholder DIV.
-	jGauge2.label.suffix = 'deg'; // Make the value label bytes.
-	jGauge2.autoPrefix = autoPrefix.none;
-	jGauge2.ticks.count = 5;
-	jGauge2.ticks.start = 0;
-	jGauge2.ticks.end = 360;
-	jGauge2.segmentStart = -90;
-	jGauge2.segmentEnd = 270;
-	jGauge2.range.start = 80; // red area
-	jGauge2.range.end = 100;
-	jGauge2.imagePath = "img/jgauge_face_round.png";
-	jGauge2.width = 160;
-	jGauge2.height = 160;
-	jGauge2.needle.xOffset = 0;
-	jGauge2.needle.yOffset = 0;
-	jGauge2.label.xOffset = 0;
-	jGauge2.label.yOffset = 0;
-	
-	var jGauge3 = new jGauge(); // Create a new jGauge.
-	jGauge3.id = 'jGauge3'; // Link the new jGauge to the placeholder DIV.
-	jGauge3.label.suffix = 'deg'; // Make the value label bytes.
-	jGauge3.autoPrefix = autoPrefix.none;
-	jGauge3.ticks.count = 5;
-	jGauge3.ticks.start = 0;
-	jGauge3.ticks.end = 360;
-	jGauge3.segmentStart = -90;
-	jGauge3.segmentEnd = 270;
-	jGauge3.range.start = 80; // red area
-	jGauge3.range.end = 100;
-	jGauge3.imagePath = "img/jgauge_face_round.png";
-	jGauge3.width = 160;
-	jGauge3.height = 160;
-	jGauge3.needle.xOffset = 0;
-	jGauge3.needle.yOffset = 0;
-	jGauge3.label.xOffset = 0;
-	jGauge3.label.yOffset = 0;
-
-	var jGauge4 = new jGauge(); // Create a new jGauge.
-	jGauge4.id = 'jGauge4'; // Link the new jGauge to the placeholder DIV.
-	jGauge4.label.suffix = 'deg'; // Make the value label bytes.
-	jGauge4.autoPrefix = autoPrefix.none;
-	jGauge4.ticks.count = 5;
-	jGauge4.ticks.start = 0;
-	jGauge4.ticks.end = 360;
-	jGauge4.segmentStart = -90;
-	jGauge4.segmentEnd = 270;
-	jGauge4.range.start = 80; // red area
-	jGauge4.range.end = 100;
-	jGauge4.imagePath = "img/jgauge_face_round.png";
-	jGauge4.width = 160;
-	jGauge4.height = 160;
-	jGauge4.needle.xOffset = 0;
-	jGauge4.needle.yOffset = 0;
-	jGauge4.label.xOffset = 0;
-	jGauge4.label.yOffset = 0;
-	
-	// controls
-	var jGauge1Control = new jGaugeControl();
-	jGauge1Control.id = 'jGauge1Control';
-	jGauge1Control.jGauge = jGauge1;
-	
-	var jGauge2Control = new jGaugeControl();
-	jGauge2Control.id = 'jGauge2Control';
-	jGauge2Control.jGauge = jGauge2;
-	
-	var jGauge3Control = new jGaugeControl();
-	jGauge3Control.id = 'jGauge3Control';
-	jGauge3Control.jGauge = jGauge3;
-	
-	var jGauge4Control = new jGaugeControl();
-	jGauge4Control.id = 'jGauge4Control';
-	jGauge4Control.jGauge = jGauge4;
-	
-	$(document).ready(function() {
-		jGauge1.init();		
-		jGauge2.init();
-		jGauge3.init();
-		jGauge4.init();
-		
-		jGauge1Control.init();
-		jGauge2Control.init();
-		jGauge3Control.init();
-		jGauge4Control.init();
-		
-	});
+function mUp(evt) {
+	if(bmousedown)
+		get('http://' + server + '/?pwm=' + val);
+	bmousedown=0;
+}
 </script>
-
 </head>
-
-<body>
-	<div style="margin:0 auto;">
-			<div style="display: block; float: left">
-				<div id="jGauge1" class="jgauge"></div>
-				<div id="jGauge1Control" class="jgaugecontrol"></div>			
-			</div>
-
-			<div style="display: block; float: left">
-				<div id="jGauge2" class="jgauge"></div>
-				<div id="jGauge2Control" class="jgaugecontrol"></div>			
-			</div>
-			
-			<div style="display: block; float: left">
-				<div id="jGauge3" class="jgauge"></div>
-				<div id="jGauge3Control" class="jgaugecontrol"></div>
-			</div>
-			
-			<div style="display: block; float: left">
-				<div id="jGauge4" class="jgauge"></div>
-				<div id="jGauge4Control" class="jgaugecontrol"></div>				
-			</div>
-	</div>
-</body>
+<body onload="start()">
+<svg id='mainsvg' xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 300 286" preserveAspectRatio="xMidYMid slice" style="width: 300px; height: 286px; display: block">
+  <g>
+    <rect width="300" height="286" ry="21" x="0" y="0" style="fill:#000"/>
+	<circle cx="150" cy="143" r="140" stroke="#fff" stroke-width="4" fill="none"/>
+	<path d="m 150 10 l 0 40" class="tick"/>
+	<path d="m 17 143 l 40 0" class="tick"/>
+	<path d="m 150 276 l 0 -40" class="tick"/>
+	<path d="m 283 143 l -40 0" class="tick"/>
+	<text x="150" y="143" dx="0" dy="8" id="maintext" text-anchor="middle" style="font-size:30px;fill:#ff8c00;font-family:Berlin Sans FB">180</text>
+	<path id="needle" d="m 150 113 l 0 -100" class="tick" style="stroke-width:6"/>
+	<rect width="300" height="286" ry="21" x="0" y="0" opacity="0" onmousemove="mMove(evt)" onmousedown="mDown(evt)" onmouseup="mUp(evt)" />
+  </g>
+</svg> 
+</body></html>	
