@@ -1,0 +1,134 @@
+<html><head>
+<style type="text/css">
+.tick {fill:none;stroke:#fff;stroke-width:4;stroke-linecap:butt}
+.gaugeContainer {float: left; margin: 10 10 10 10}
+.statusBar {width: 95%; margin: 10px auto; border: 0px solid black; text-align: center}
+</style>
+<script type='text/javascript'>
+var server = '192.168.1.80';
+var bmousedown=0;
+var val=0;
+
+function start() {
+ 
+	 // draw gauges
+	 makeGauge("gauge1");
+	 makeGauge("gauge2");
+	 makeGauge("gauge3");
+	 makeGauge("gauge4");
+	 
+	 get("gauge1", "http://" + server + "/?get1");
+}
+
+	 
+function get(divId, url) {
+	var http_request;
+	var _divId = divId;
+	
+	if (window.XMLHttpRequest) {
+	http_request = new XMLHttpRequest();
+	 } else if (window.ActiveXObject) {
+	http_request = new
+	 ActiveXObject("Microsoft.XMLHTTP");
+	 }
+	 http_request.onreadystatechange = function(){
+		if (http_request.readyState == 4) {
+			if (http_request.status == 200) {
+				setStatus(_divId, "OK " + http_request.responseText);
+			 } else {
+				setStatus(_divId, "Error, code " + http_request.status);
+			 }		
+		 } else {}	
+	 };
+	 
+	 http_request.open('GET',url,true);
+	 http_request.send();
+
+}
+
+ 
+function setValue(divId, v) {
+	var nee = document.getElementById(divId + "_needle");
+		nee.setAttributeNS(null,"transform","rotate("+v+",150,143)");
+		
+	document.getElementById(divId + "_maintext").textContent = v;
+}
+
+function getTime() {
+  var currentTime = new Date ( );
+
+  var currentHours = currentTime.getHours ( );
+  var currentMinutes = currentTime.getMinutes ( );
+  var currentSeconds = currentTime.getSeconds ( );
+
+  // Pad the minutes and seconds with leading zeros, if required
+  currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
+  currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
+  currentHours =   ( currentHours < 10   ? "0" : "" ) + currentHours;
+
+  // Compose the string for display
+  return currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds;
+}
+
+function setStatus(divId, statusText) {
+	document.getElementById(divId + "_statusBar").innerHTML += getTime() + ' ' + statusText + '\n';
+	document.getElementById(divId + "_statusBar").scrollTop = document.getElementById(divId + "_statusBar").scrollHeight;
+}
+ 
+function mMove(evt, src) {
+	var divId = src.parentNode.parentNode.parentNode.id;
+	var msvg = document.getElementById(divId + "_mainsvg");
+	var offX = msvg.offsetLeft;
+	var offY = msvg.offsetTop;
+	var posX = evt.clientX - offX;
+	var posY = evt.clientY - offY;
+
+	if(bmousedown) {
+		val = Math.round( Math.atan2( (posX - 150) , (-posY + 143) ) * 180/Math.PI );
+		setValue(divId, val);
+	}
+}
+ 
+function mDown(evt, src) {
+	bmousedown=1;
+}
+
+function mUp(evt, src) {
+	var divId = src.parentNode.parentNode.parentNode.id;
+	
+	if(bmousedown) {
+		setStatus(divId, 'Set request to ' + val);
+		get(divId, 'http://' + server + '/?pwm=' + val);
+	}
+		
+	bmousedown=0;
+}
+
+function makeGauge(divId) {
+	document.getElementById(divId).innerHTML = '<!-- gauge --> \
+		<svg id="' + divId + '_mainsvg" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 300 286" preserveAspectRatio="xMidYMid slice" style="width: 300px; height: 286px; display: block"> \
+		  <g> \
+			<rect width="300" height="286" ry="21" x="0" y="0" style="fill:#000"/> \
+			<circle cx="150" cy="143" r="140" stroke="#fff" stroke-width="4" fill="none"/> \
+			<path d="m 150 10 l 0 40" class="tick"/> \
+			<path d="m 17 143 l 40 0" class="tick"/> \
+			<path d="m 150 276 l 0 -40" class="tick"/> \
+			<path d="m 283 143 l -40 0" class="tick"/> \
+			<text x="150" y="143" dx="0" dy="8" id="' + divId + '_maintext" text-anchor="middle" style="font-size:30px;fill:#ff8c00;font-family:Berlin Sans FB">180</text> \
+			<path id="' + divId + '_needle" d="m 150 113 l 0 -100" class="tick" style="stroke-width:6"/> \
+			<rect width="300" height="286" ry="21" x="0" y="0" opacity="0" onmousemove="mMove(evt, this)" onmousedown="mDown(evt, this)" onmouseup="mUp(evt, this)" /> \
+		  </g> \
+		</svg> \
+		<div class="statusBar"> <textarea rows="4" cols="30" id="' + divId + '_statusBar"></textarea> </div> \
+		'
+}
+</script>
+</head>
+<body onload="start()">
+
+<div id="gauge1" class="gaugeContainer"></div>
+<div id="gauge2" class="gaugeContainer"></div>
+<div id="gauge3" class="gaugeContainer"></div>
+<div id="gauge4" class="gaugeContainer"></div>
+
+</body></html>	

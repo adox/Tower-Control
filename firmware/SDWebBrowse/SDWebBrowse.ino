@@ -221,6 +221,14 @@ void loop()
             // set pwm
             
             // end
+            client.println("HTTP/1.1 200 OK");
+            break;
+          } else if(strstr(filename, "?get") != 0) {
+            Serial.println("PWM get request");
+            client.println("HTTP/1.1 200 OK");
+            client.println("Content-Type: text/html");
+            client.println();
+            client.println("45");
             break;
           } else if (! file.open(&root, filename, O_READ)) {
             client.println("HTTP/1.1 404 Not Found");
